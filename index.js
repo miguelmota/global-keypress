@@ -3,7 +3,6 @@ var fs = require('fs');
 var util = require('util');
 var events = require('events');
 var isRoot = require('is-root');
-var Tail = require('tail').Tail;
 
 function Spy() {
   this.isSpawned = false;
