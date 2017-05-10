@@ -2,12 +2,14 @@ var fs = require('fs');
 var util = require('util');
 var events = require('events');
 var cp = require('child_process')
-var isRoot = require('is-root');
+var tmp = require('tmp');
 
 var spawn = cp.spawn;
 var spawnSync = cp.spawnSyncn
 var exec = cp.exec
 var execSync = cp.execSync
+
+var isRoot = (process.getuid && process.getuid() === 0)
 
 function Spy() {
   this.isSpawned = false;
@@ -19,15 +21,17 @@ util.inherits(Spy, events.EventEmitter);
 Spy.prototype.start = function() {
 
   // if called sudo directly
-  if (isRoot()) {
+  if (isRoot) {
     this.proc = spawn(__dirname + '/bin/globalkeypress-daemon');
 
     next.bind(this)()
 
   // otherwise prompt for sudo password
   } else {
-    var outfile = __dirname + '/events.log'
-    fs.openSync(outfile, 'w')
+    var tmpobj = tmp.fileSync()
+    var outfile = tmpobj.name
+
+    var fd = fs.openSync(outfile, 'w')
 
     this.proc = spawn('tail', ['-f', outfile])
 
@@ -77,7 +81,7 @@ Spy.prototype.isRunning = function() {
 }
 
 function killAll() {
-  if (isRoot()) {
+  if (isRoot) {
     exec('ps aux | grep global-keypress | awk \'{print $2}\' | xargs sudo kill')
   } else {
     var cmd = `/usr/bin/osascript -e "do shell script \\\"/bin/ps aux | grep global-keypress | awk '{print $2}' | xargs sudo kill\\\" with administrator privileges"`
