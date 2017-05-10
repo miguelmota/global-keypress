@@ -2,11 +2,11 @@
 
 > Global key press event emitter
 
-NOTE: requires sudo privileges. GUI prompt will appear asking for sudo access if not running with sudo.
+NOTE: requires sudo privileges. GUI prompt will appear asking for sudo access if not running as root.
 
 Currently only supports Mac OS X.
 
-Pull Requests are welcomed.
+Pull Requests are welcomed : )
 
 ## Install
 
@@ -16,7 +16,7 @@ npm install global-keypress
 
 ## Development
 
-compile
+compile native module
 
 ```bash
 npm run compile

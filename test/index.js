@@ -1,4 +1,4 @@
-const GK = require('./index');
+const GK = require('../index');
 //const GK = require('global-keypress');
 
 // instantiate
@@ -7,7 +7,7 @@ const gk = new GK();
 // launch keypress daemon process
 gk.start();
 
-// emitted events by process
+// listen to global keypress events
 gk.on('press', data => {
   console.log(data);
 });
