@@ -1,8 +1,13 @@
-var {spawn, spawnSync, exec, execSync} = require('child_process')
 var fs = require('fs');
 var util = require('util');
 var events = require('events');
+var cp = require('child_process')
 var isRoot = require('is-root');
+
+var spawn = cp.spawn;
+var spawnSync = cp.spawnSyncn
+var exec = cp.exec
+var execSync = cp.execSync
 
 function Spy() {
   this.isSpawned = false;
@@ -21,10 +26,10 @@ Spy.prototype.start = function() {
 
   // otherwise prompt for sudo password
   } else {
-    var outfile = 'events.log'
+    var outfile = __dirname + '/events.log'
     fs.openSync(outfile, 'w')
 
-    this.proc = spawn('tail', ['-f', 'events.log'])
+    this.proc = spawn('tail', ['-f', outfile])
 
     next.bind(this)()
 
@@ -32,7 +37,6 @@ Spy.prototype.start = function() {
 
     var proc = exec(cmd)
   }
-
 
   function next() {
     this.isSpawned = true;
