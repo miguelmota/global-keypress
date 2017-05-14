@@ -4,7 +4,7 @@
 
 NOTE: requires sudo privileges. GUI prompt will appear asking for sudo access if not running as root.
 
-Currently only supports Mac OS X.
+Supports Mac OS X and Linux.
 
 Pull Requests are welcomed : )
 
@@ -55,6 +55,8 @@ gk.stop();
 ## Resources
 
 - [Receiving, Filtering, and Modifying Key Presses and Releases](http://osxbook.com/book/bonus/chapter2/alterkeys/)
+
+- [SKeylogger](https://github.com/gsingh93/simple-key-logger)
 
 <!--
 https://bitbucket.org/cabalistic/ogredeps/src/a623a62ae85c/src/ois/src/?at=default
