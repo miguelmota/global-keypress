@@ -36,6 +36,21 @@ gk.start();
 // emitted events by process
 gk.on('press', data => {
   console.log(data);
+
+  // example output
+  /*
+  { data: 'a' }
+  { data: 'b' }
+  { data: '1' }
+  { data: '2' }
+  { data: '<RShift>' }
+  { data: 'A' }
+  { data: 'B' }
+  { data: '!' }
+  { data: '@' }
+  { data: '[released <RShift>]' }
+  { data: '<Enter>' }
+  */
 });
 
 // process error

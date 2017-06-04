@@ -112,8 +112,7 @@ Spy.prototype.start = function() {
 
       if (key !== '') {
         this.emit('press', {
-          code: key>>0,
-          key: key
+          data: key
         })
       }
     }.bind(this))

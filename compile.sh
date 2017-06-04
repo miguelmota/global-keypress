@@ -2,7 +2,7 @@
 
 # Mac OS X
 if [ "$(uname)" == "Darwin" ]; then
-  gcc -Wall -o ./bin/globalkeypress-daemon ./src/mac/globalkeypress.c -framework ApplicationServices;
+  gcc ./src/mac/globalkeypress.c -framework ApplicationServices -framework Carbon -o ./bin/globalkeypress-daemon;
 
 # GNU/Linux
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
