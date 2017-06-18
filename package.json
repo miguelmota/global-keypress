@@ -34,7 +34,6 @@
     "url": "https://github.com/miguelmota/global-keypress/blob/master/LICENSE.md"
   },
   "dependencies": {
-    "mkdirp": "^0.5.1",
-    "tmp": "0.0.31"
+    "mkdirp": "^0.5.1"
   }
 }

