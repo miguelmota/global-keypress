@@ -3,6 +3,7 @@ var util = require('util')
 var events = require('events')
 var cp = require('child_process')
 var tmp = require('tmp')
+var mkdirp = require('mkdirp')
 
 var spawn = cp.spawn
 var spawnSync = cp.spawnSyncn
@@ -22,44 +23,42 @@ function Spy() {
 util.inherits(Spy, events.EventEmitter)
 
 Spy.prototype.start = function() {
+  var binfile = __dirname + '/bin/globalkeypress'
+  var logfile = '/var/log/globalkeypress.log'
+  var createLogfile = 'mkdir -p /var/log; touch ' + logfile + '; chmod 777 ' + logfile + ';';
+
   if (isMac) {
-    // if called sudo directly
-    if (isRoot) {
-      this.proc = spawn(__dirname + '/bin/globalkeypress-daemon')
+    var alreadyRunning = false
 
-      next.bind(this)()
+    var psaux = execSync('ps aux | grep "[g]lobalkeypress" || echo 0').toString().trim()
+    var alreadyRunning = (psaux !== '0')
 
-    // otherwise prompt for sudo password
-    } else {
-      var tmpobj = tmp.fileSync()
-      var outfile = tmpobj.name
+    if (!alreadyRunning) {
+      // if called sudo directly
+      if (isRoot) {
+        exec('bash -c "' + createLogfile + binfile + ' > ' + logfile + ' &"')
 
-      var fd = fs.openSync(outfile, 'w')
+      // otherwise prompt for sudo password
+      } else {
+        var cmd = '/usr/bin/osascript -e \'do shell script "bash -c \\\"' + createLogfile + binfile + ' > ' + logfile + ' &\\\"" with administrator privileges\''
 
-      this.proc = spawn('tail', ['-f', outfile])
-
-      next.bind(this)()
-
-      var cmd = '/usr/bin/osascript -e \'do shell script "' + __dirname + '/bin/globalkeypress-daemon > ' + outfile + ' &" with administrator privileges\''
-
-      var proc = exec(cmd)
+        exec(cmd)
+      }
     }
+
+    this.proc = spawn('tail', ['-f', logfile])
+    next.bind(this)()
   } else if (isLinux) {
     if (isRoot) {
-      var outfile = '/var/log/keypress_' + Date.now() + '.log'
-
       var fd = fs.openSync(outfile, 'w')
 
-      var p = exec(__dirname + '/bin/globalkeypress-daemon --logfile=' + outfile)
+      var p = exec(binfile + ' --logfile=' + logfile)
 
-      this.proc = spawn('tail', ['-f', outfile])
+      this.proc = spawn('tail', ['-f', logfile])
 
       next.bind(this)()
     } else {
-      var tmpobj = tmp.fileSync()
-      var outfile = tmpobj.name
-
-      var fd = fs.openSync(outfile, 'w')
+      var fd = fs.openSync(logfile, 'w')
 
       var paths = [
         '/usr/bin/pkexec',
@@ -82,7 +81,7 @@ Spy.prototype.start = function() {
 
       var bin = paths[pathIndex]
 
-      var cmd = __dirname + '/bin/globalkeypress-daemon --logfile=' + outfile
+      var cmd = __dirname + '/bin/globalkeypress --logfile=' + logfile
 
       if (/pkexec/gi.test(bin)) {
         cmd = bin + ' --disable-internal-agent ' + cmd
@@ -96,7 +95,7 @@ Spy.prototype.start = function() {
 
       var p = exec(cmd)
 
-      this.proc = spawn('tail', ['-f', outfile])
+      this.proc = spawn('tail', ['-f', logfile])
 
       next.bind(this)()
     }
@@ -144,10 +143,12 @@ Spy.prototype.isRunning = function() {
 
 function killAll() {
   if (isRoot) {
-    exec('ps aux | grep global-keypress | awk \'{print $2}\' | xargs sudo kill')
+    //exec('ps aux | grep global-keypress | awk \'{print $2}\' | xargs sudo kill')
   } else {
-    var cmd = `/usr/bin/osascript -e "do shell script \\\"/bin/ps aux | grep global-keypress | awk '{print $2}' | xargs sudo kill\\\" with administrator privileges"`
-    //var proc = execSync(cmd)
+    if (isMac) {
+      var cmd = `/usr/bin/osascript -e "do shell script \\\"/bin/ps aux | grep global-keypress | awk '{print $2}' | xargs sudo kill\\\" with administrator privileges"`
+      //var proc = execSync(cmd)
+    }
   }
 }
 

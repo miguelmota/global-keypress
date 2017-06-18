@@ -6,8 +6,6 @@ NOTE: requires sudo privileges. GUI prompt will appear asking for sudo access if
 
 Supports Mac OS X and Linux.
 
-Pull Requests are welcomed : )
-
 ## Install
 
 ```shell

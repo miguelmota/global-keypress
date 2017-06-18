@@ -1,6 +1,6 @@
 {
   "name": "global-keypress",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Global key press event emitter",
   "main": "index.js",
   "scripts": {
@@ -34,6 +34,7 @@
     "url": "https://github.com/miguelmota/global-keypress/blob/master/LICENSE.md"
   },
   "dependencies": {
+    "mkdirp": "^0.5.1",
     "tmp": "0.0.31"
   }
 }
