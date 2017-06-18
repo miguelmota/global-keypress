@@ -1,7 +1,7 @@
 CC := gcc
-CFLAGS := -g -Wall
+CFLAGS := -g -Wall -framework ApplicationServices -framework Carbon
 BIN_NAME := globalkeypress
-OBJS := globalkeypress.o key_util.o options.o config.o
+OBJS := globalkeypress.o
 
 all: $(BIN_NAME)
 

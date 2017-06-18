@@ -2,13 +2,18 @@
 
 # Mac OS X
 if [ "$(uname)" == "Darwin" ]; then
-  gcc ./src/mac/globalkeypress.c -framework ApplicationServices -framework Carbon -o ./bin/globalkeypress-daemon;
+  cd ./src/mac;
+  make;
+  mv globalkeypress ../../bin/globalkeypress;
+  make clean;
+  cd ../..;
 
 # GNU/Linux
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
   cd ./src/linux;
   make;
-  mv skeylogger ../../bin/globalkeypress-daemon;
+  mv globalkeypress ../../bin/globalkeypress;
+  make clean;
   cd ../..;
 
 # 32 bits Windows NT
