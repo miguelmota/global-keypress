@@ -54,11 +54,11 @@ KeyLogger.prototype.start = function() {
   } else if (isLinux) {
     if (!alreadyRunning) {
       var cmd = createLogfile + binfile
-      cmd = 'bash -c "' + cmd + '"';
+      cmd = 'bash -c "' + cmd + '"'
 
       // if called sudo directly
       if (isRoot) {
-          exec(cmd)
+        exec(cmd)
 
         // otherwise prompt for sudo password
       } else {
